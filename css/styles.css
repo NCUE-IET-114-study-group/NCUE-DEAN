@@ -342,6 +342,15 @@ body {
 
 /* 手機版卡片樣式 原768px 修正版型 */
 @media (max-width: 1000px) {
+    .navbar .container {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .form-header{
+        display: none;
+    }
+
     .table-responsive {
         display: none;
     }
