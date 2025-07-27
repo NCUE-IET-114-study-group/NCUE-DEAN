@@ -380,7 +380,7 @@ body {
         font-size: 0.9rem;
         color: #666;
         background: var(--bg-light);
-        padding: 0.25rem 0.5rem;
+        padding: 0 !important;
         border-radius: 4px;
         display: inline-block;
     }
