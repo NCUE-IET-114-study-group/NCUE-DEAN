@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>彰師大課程查詢系統</title>
+    <meta name="description" content="國立彰化師範大學課程查詢系統，提供開課資訊查詢服務">
+
+    <!-- Bootstrap CSS -->
+    <link href="./modules/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="./modules/font-awesome/all.min.css" rel="stylesheet">
+
+    <!-- 自訂樣式 -->
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+
+<body>
+    <!-- 初始載入遮罩 -->
+    <div id="init-loading">
+        <div class="spinner" role="status" aria-label="載入中"></div>
+        <p>系統載入中，請稍候...</p>
+    </div>
+
+    <!-- 跳到主要內容的連結 -->
+    <a href="#main-content" class="skip-link">跳到主要內容</a>
+
+    <!-- 導航列 -->
+    <nav class="navbar navbar-expand-lg fixed-top" role="navigation" aria-label="主要導航">
+        <div class="container">
+            <a class="navbar-brand" href="#" aria-label="彰師大課程查詢系統首頁">
+                <i class="fas fa-graduation-cap me-2" aria-hidden="true"></i>
+                彰師大課程查詢系統
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <main id="main-content" role="main">
+        <!-- 查詢條件區域 -->
+        <section class="search-section" aria-labelledby="search-heading">
+            <div class="container">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h1 id="search-heading">
+                            <i class="fas fa-search me-2" aria-hidden="true"></i>
+                            查詢條件
+                        </h1>
+                    </div>
+
+                    <form id="courseForm" novalidate>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                                <div class="form-group">
+                                    <label for="cls_branch" class="form-label">日夜間別</label>
+                                    <select class="form-select" id="cls_branch" name="sel_cls_branch"
+                                        aria-describedby="cls_branch_help">
+                                        <option value="">載入中...</option>
+                                    </select>
+                                    <div id="cls_branch_help" class="form-text">選擇課程開設的時間類別</div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="english_course" class="form-label">全英語授課</label>
+                                            <select class="form-select" id="english_course" name="sel_scr_english">
+                                                <option value="">載入中...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="distance_learning" class="form-label">遠距課程</label>
+                                            <select class="form-select" id="distance_learning"
+                                                name="sel_SCR_IS_DIS_LEARN">
+                                                <option value="">載入中...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label for="academic_year" class="form-label">學年度</label>
+                                    <select class="form-select" id="academic_year" name="sel_yms_year" required
+                                        aria-describedby="year_help">
+                                        <option value="">載入中...</option>
+                                    </select>
+                                    <div id="year_help" class="form-text">選擇查詢的學年度</div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label for="semester" class="form-label">學期</label>
+                                    <select class="form-select" id="semester" name="sel_yms_smester" required>
+                                        <option value="">載入中...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-12">
+                                <div class="form-group">
+                                    <label for="course_code" class="form-label">課程代碼</label>
+                                    <input type="text" class="form-control" id="course_code" name="scr_selcode"
+                                        placeholder="輸入課程代碼" aria-describedby="code_help">
+                                    <div id="code_help" class="form-text">選填：可輸入特定課程代碼查詢</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label for="class_dept" class="form-label">修課班別</label>
+                                    <select class="form-select" id="class_dept" name="sel_cls_id"
+                                        aria-describedby="dept_help">
+                                        <option value="">請選擇班別</option>
+                                    </select>
+                                    <div id="dept_help" class="form-text">選填：可選擇特定班別</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label for="week_day" class="form-label">上課時間</label>
+                                    <select class="form-select" id="week_day" name="sel_sct_week">
+                                        <option value="">不限</option>
+                                        <option value="1">星期一</option>
+                                        <option value="2">星期二</option>
+                                        <option value="3">星期三</option>
+                                        <option value="4">星期四</option>
+                                        <option value="5">星期五</option>
+                                        <option value="6">星期六</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label for="course_name" class="form-label">課程名稱</label>
+                                    <input type="text" class="form-control" id="course_name" name="sub_name"
+                                        placeholder="輸入課程名稱關鍵字" aria-describedby="name_help">
+                                    <div id="name_help" class="form-text">可輸入部分課程名稱進行模糊搜尋</div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-group">
+                                    <label for="teacher_name" class="form-label">教師姓名</label>
+                                    <input type="text" class="form-control" id="teacher_name" name="emp_name"
+                                        placeholder="輸入教師姓名" aria-describedby="teacher_help">
+                                    <div id="teacher_help" class="form-text">可輸入教師姓名進行查詢</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary" aria-describedby="search_help">
+                                    <i class="fas fa-search me-2" aria-hidden="true"></i>
+                                    查詢課程
+                                </button>
+                                <div id="search_help" class="form-text">點擊此按鈕開始搜尋符合條件的課程</div>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fas fa-redo me-2" aria-hidden="true"></i>
+                                    清除條件
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 說明資訊 -->
+                <div class="info-text">
+                    <h6><i class="fas fa-info-circle me-2" aria-hidden="true"></i>說明</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>上限人數</strong>：課程最多可選上人數</p>
+                            <p><strong>登記人數</strong>：預選階段有多少人登記想選這門課</p>
+                            <p><strong>選上人數</strong>：課程實際有選上的人數</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>教室代碼說明</strong>：前二碼為系館大樓，第三碼為樓層，後二碼為教室序號</p>
+                            <p>例如：10312 即白沙大樓三樓第12號教室</p>
+                            <p><a href="https://rpage.ncue.edu.tw/p/412-1000-89.php?Lang=zh-tw" target="_blank"
+                                    rel="noopener" aria-label="在新視窗開啟大樓配置圖">本校大樓配置圖</a> |
+                                <a href="https://acadaff.ncue.edu.tw/var/file/2/1002/img/1011/114294831.html"
+                                    target="_blank" rel="noopener" aria-label="在新視窗開啟教室代碼對照表">教室代碼對照表</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 查詢結果載入動畫 -->
+        <div class="loading" id="loading" aria-live="polite">
+            <div class="spinner" role="status" aria-label="載入中"></div>
+            <p>正在查詢課程資料，請稍候...</p>
+        </div>
+
+        <!-- 查詢結果 -->
+        <section class="results-section" aria-labelledby="results-heading" style="display: none;">
+            <div class="container">
+                <!-- 統計資訊 -->
+                <div class="results-stats" id="results-stats" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="total-courses">0</div>
+                            <div class="stat-label">總課程數</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="available-courses">0</div>
+                            <div class="stat-label">可選課程</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="cross-class-courses">0</div>
+                            <div class="stat-label">可跨班課程</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="english-courses">0</div>
+                            <div class="stat-label">全英語課程</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <!-- <div class="form-header">
+                        <h2 id="results-heading">
+                            <i class="fas fa-list me-2" aria-hidden="true"></i>
+                            開課課程列表
+                        </h2>
+                    </div> -->
+
+                    <!-- 表格工具列 -->
+                    <div class="table-toolbar">
+                        <div class="toolbar-section">
+                            <label for="filter-crossclass" class="form-label mb-0">篩選：</label>
+                            <select id="filter-crossclass" class="form-select">
+                                <option value="">全部課程</option>
+                                <option value="可跨班系">可跨班課程</option>
+                                <option value="限本系">限本系課程</option>
+                                <option value="限本班">限本班課程</option>
+                            </select>
+                        </div>
+
+                        <div class="toolbar-section">
+                            <label for="filter-type" class="form-label mb-0">課程性質：</label>
+                            <select id="filter-type" class="form-select">
+                                <option value="">全部性質</option>
+                            </select>
+                        </div>
+
+                        <div class="toolbar-section">
+                            <button type="button" id="toggle-english" class="btn btn-outline-secondary">
+                                <i class="fas fa-language"></i>
+                            </button>
+                        </div>
+
+                        <div class="toolbar-section">
+                            <button type="button" id="toggle-columns" class="btn btn-outline-primary">
+                                <i class="fas fa-columns me-1"></i>
+                                展開全部欄位
+                            </button>
+                        </div>
+
+                        <div class="toolbar-section">
+                            <button type="button" id="export-csv" class="btn btn-outline-success">
+                                <i class="fas fa-download me-1"></i>
+                                匯出CSV
+                            </button>
+                        </div>
+
+                        <div class="toolbar-section ms-auto">
+                            <span class="text-muted">
+                                顯示 <span id="visible-count">0</span> / <span id="total-count">0</span> 門課程
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 表格容器 -->
+                    <div class="table-container">
+                        <div class="table-responsive" aria-label="課程列表表格">
+                            <table class="table table-hover" id="course-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="sortable hideable-column" data-sort="id">序號</th>
+                                        <th scope="col" class="sortable" data-sort="code">課程代碼</th>
+                                        <th scope="col" class="sortable" data-sort="class">開課班別</th>
+                                        <th scope="col" class="sortable" data-sort="name">課程名稱</th>
+                                        <th scope="col" class="hideable-column">教學大綱</th>
+                                        <th scope="col" class="sortable" data-sort="type">課程性質</th>
+                                        <th scope="col" class="sortable hideable-column" data-sort="type2">課程性質2</th>
+                                        <th scope="col" class="sortable hideable-column" data-sort="english">全英語</th>
+                                        <th scope="col" class="sortable" data-sort="credit">學分</th>
+                                        <th scope="col" class="sortable" data-sort="teacher">教師姓名</th>
+                                        <th scope="col" class="sortable" data-sort="building">上課大樓</th>
+                                        <th scope="col" class="sortable" data-sort="schedule">上課節次+地點</th>
+                                        <th scope="col" class="sortable" data-sort="maxStudents">上限人數</th>
+                                        <th scope="col" class="sortable" data-sort="registered">登記人數</th>
+                                        <th scope="col" class="sortable hideable-column" data-sort="selected">選上人數</th>
+                                        <th scope="col" class="sortable" data-sort="crossClass">可跨班系</th>
+                                        <th scope="col" class="hideable-column">備註</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="course-table-body">
+                                    <!-- 課程資料顯示區 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 手機版卡片 -->
+                    <div class="mobile-cards" id="mobile-cards">
+                        <!-- 手機版課程卡片顯示區 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="error-screen" role="alert" aria-live="assertive">
+        連線失敗，服務異常中
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="./modules/bootstrap/bootstrap.bundle.min.js"></script>
+
+    <!-- 自訂JS -->
+    <script src="./js/main.js"></script>
+
+</body>
+
+</html>
