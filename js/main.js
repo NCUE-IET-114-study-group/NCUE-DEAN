@@ -1,3 +1,5 @@
+// js/main.js
+
 // 全域變數
 let allCourses = [];
 let filteredCourses = [];
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const visibleCountSpan = document.getElementById('visible-count');
     const totalCountSpan = document.getElementById('total-count');
 
-    // 搜尋和篩選條件檢查
+    // 需滿足其中之一才允許搜尋的欄位 id
     const monitorIds = [
         'course_code', 'course_name', 'teacher_name',
         'class_dept', 'week_day', 'english_course', 'distance_learning'
@@ -28,28 +30,89 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const submitBtn = document.querySelector('button[type="submit"]');
 
+    /**
+     * 檢查是否至少有一項過濾條件被設定
+     * @returns {boolean}
+     */
+    function hasFilterCondition() {
+        return monitorIds.some(id =>
+            document.getElementById(id).value.trim() !== ''
+        );
+    }
+
+    // 從 URL 讀取參數，自動填入並執行搜尋（需檢查 hasFilterCondition）
+    async function applyParamsToForm() {
+        const params = new URLSearchParams(window.location.search);
+        let hasAnyParam = false;
+
+        for (const [key, value] of params.entries()) {
+            const el = form.elements[key];
+            if (el) {
+                el.value = value;
+                hasAnyParam = true;
+            }
+        }
+
+        if (!hasAnyParam) return;
+
+        // 先載入班別選項
+        const yr = document.getElementById('academic_year').value;
+        const sm = document.getElementById('semester').value;
+        const br = document.getElementById('cls_branch').value;
+        if (yr && sm && br) {
+            await loadClassOptions();
+            // 班別載入完成後，若有 sel_cls_id 參數也帶入
+            const clsParam = params.get('sel_cls_id');
+            if (clsParam) {
+                document.getElementById('class_dept').value = clsParam;
+            }
+        }
+
+        // 自動搜尋前，再次檢查安全條件
+        if (!hasFilterCondition()) {
+            console.warn('自動搜尋被阻擋：未設定任何過濾條件');
+            alert('自動帶入參數時，請至少設定「課程代碼、課程名稱、教師姓名」或「修課班別、上課時間、全英語、遠距」其中一項');
+            return;
+        }
+
+        // 通過檢查後再執行搜尋
+        searchCourses();
+    }
+
+    // 送出時，把參數寫入 URL 並執行搜尋
     submitBtn.addEventListener('click', function (e) {
         e.preventDefault();
 
-        const hasFilter = monitorIds.some(id =>
-            document.getElementById(id).value.trim() !== ''
-        );
-
-        if (!hasFilter) {
+        if (!hasFilterCondition()) {
             alert('請至少輸入「課程代碼、課程名稱、教師姓名」或選擇「修課班別、上課時間、全英語、遠距」其中一項');
             return;
         }
 
+        // 更新網址列參數
+        const params = new URLSearchParams(new FormData(form));
+        const newUrl = window.location.pathname + '?' + params.toString();
+        window.history.replaceState(null, '', newUrl);
+
         searchCourses();
     });
 
+    // 重置時清除結果並移除 URL 參數
     form.addEventListener('reset', () => {
         clearResults();
+        window.history.replaceState(null, '', window.location.pathname);
     });
 
     // 顯示初始載入遮罩
     initLoading.style.display = 'flex';
-    loadSystemOptions();
+    loadSystemOptions()
+        .then(() => {
+            initLoading.style.display = 'none';
+            // 啟動時讀取 URL 參數
+            applyParamsToForm();
+        })
+        .catch(() => {
+            initLoading.style.display = 'none';
+        });
 
     // 篩選和排序事件監聽
     filterCrossclass.addEventListener('change', applyFilters);
@@ -126,8 +189,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('載入系統選項時發生錯誤:', error);
             showErrorScreen();
-        } finally {
-            document.getElementById('init-loading').style.display = 'none';
         }
     }
 
@@ -667,6 +728,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (confirm('確定要清除搜尋結果嗎？')) {
                 form.reset();
                 clearResults();
+                window.history.replaceState(null, '', window.location.pathname);
             }
         }
     });
@@ -729,7 +791,7 @@ document.addEventListener('keydown', e => {
                 break;
             case 'r': case 'R':
                 e.preventDefault();
-                document.getElementById('results-heading').focus();
+                document.getElementById('results-heading')?.focus();
                 break;
             case 'h': case 'H':
                 e.preventDefault();
